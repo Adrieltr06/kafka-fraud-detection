@@ -1,0 +1,7 @@
+Topic
+    Threshold Topic
+        kafka-topics.sh --bootstrap-server localhost:9092 --topic threshold-topic --partitions 3 --replication-factor 1 --config cleanup.policy=compact --create
+
+Producer
+    Threshold Producer
+        kafka-console-producer.sh --bootstrap-server localhost:9092 --topic threshold-topic --property parse.key=true --property key.separator=;

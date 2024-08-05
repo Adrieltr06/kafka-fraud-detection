@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "namespace": "id.co.mini.project",
+  "name": "Threshold",
+  "version": "1",
+  "fields": [
+    { "name": "account_number", "type": "string", "doc": "Threshold account number" },
+    { "name": "amount", "type": "long", "doc": "Threshold amount" },
+    { "name": "transaction_type", "type": { "name": "transaction_type", "type": "enum", "symbols":  ["deposit", "withdraw", "transfer", "payment"] }, "doc": "Customer address type" }
+  ]
+}

@@ -1,0 +1,5 @@
+1;deposit;20000
+1;withdraw;10000
+1;deposit;700000
+1;payment;1000
+1;transfer;20000

@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "namespace": "id.co.mini.project",
+  "name": "Transaction",
+  "version": "1",
+  "fields": [
+    { "name": "transaction_id", "type": "string", "doc": "Transaction ID" },
+    { "name": "account_number", "type": "string", "doc": "Transaction account number" },
+    { "name": "amount", "type": "long", "doc": "Transaction amount" },
+    { "name": "transaction_type", "type": { "name": "transaction_type", "type": "enum", "symbols":  ["deposit", "withdraw", "transfer", "payment"] }, "doc": "Customer address type" },
+    { "name": "transaction_time", "type": "long", "doc": "Transaction time" },
+    { "name": "sender_account_number", "type": "string", "doc": "Transaction sender account number" },
+    { "name": "receiver_account_number", "type": "string", "doc": "Transaction receiver account number" }
+  ]
+}
