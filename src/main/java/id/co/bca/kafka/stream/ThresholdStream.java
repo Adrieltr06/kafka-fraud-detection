@@ -16,8 +16,16 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.sql.Timestamp;
 import java.util.Properties;
 
+/**
+ * Class for processing Kafka streams related to thresholds and transactions.
+ */
 public class ThresholdStream {
 
+  /**
+   * Main method to start the Kafka Streams application.
+   *
+   * @param args command line arguments
+   */
   public static void main(String[] args) {
     Properties props = new Properties();
     props.put(StreamsConfig.APPLICATION_ID_CONFIG, "threshold-stream");
@@ -28,22 +36,21 @@ public class ThresholdStream {
 
     StreamsBuilder builder = new StreamsBuilder();
 
+    // Create a KTable for thresholds from the "threshold-topic"
     KTable<String, Threshold> thresholds = builder.table("threshold-topic",
         Consumed.with(Serdes.String(), new JsonSerde<>(Threshold.class)),
         Materialized.<String, Threshold>as(Stores.persistentKeyValueStore("thresholds-store"))
             .withKeySerde(Serdes.String())
             .withValueSerde(new JsonSerde<>(Threshold.class)));
 
-    thresholds.toStream().print(Printed.<String, Threshold>toSysOut().withLabel("Thresholds"));
-
+    // Create a KStream for transactions from the "db.public.transactions" topic
     KStream<String, Transaction> transactions = builder.stream("db.public.transactions",
         Consumed.with(Serdes.String(), Serdes.serdeFrom(new JsonSerializer<>(), new TransactionDeserializer())));
 
-    transactions.print(Printed.<String, Transaction>toSysOut().withLabel("Transactions"));
-    thresholds.toStream().print(Printed.<String, Threshold>toSysOut().withLabel("Thresholds"));
-
+    // Select the key for transactions by account
     KStream<String, Transaction> transactionsByAccount = transactions.selectKey((key, transaction) -> transaction.getAccount());
 
+    // Join transactions with thresholds and create alerts if the transaction amount exceeds the threshold
     transactionsByAccount.join(thresholds, (transaction, threshold) -> {
       if (threshold != null && transaction.getAmount() > threshold.getThresholdAmount()) {
         return new Alert(transaction.getAccount(), transaction.getAmount(), new Timestamp(transaction.getTime().getTime()));
@@ -52,9 +59,12 @@ public class ThresholdStream {
     }).filter((key, alert) -> alert != null)
       .to("alerts-topic", Produced.with(Serdes.String(), new JsonSerde<>(Alert.class)));
 
+    // Build and start the Kafka Streams application
     KafkaStreams streams = new KafkaStreams(builder.build(), props);
     streams.start();
 
+    // Add a shutdown hook to close the streams on exit
     Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
   }
+
 }

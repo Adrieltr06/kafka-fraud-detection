@@ -9,15 +9,32 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+/**
+ * Deserializer for Transaction objects from Kafka messages.
+ */
 public class TransactionDeserializer implements Deserializer<Transaction> {
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(TransactionDeserializer.class);
 
+    /**
+     * Configures the deserializer.
+     *
+     * @param configs configuration settings
+     * @param isKey whether the deserializer is for keys or values
+     */
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
         // not currently used
     }
 
+    /**
+     * Deserializes a byte array into a \Transaction\ object.
+     *
+     * @param topic the topic associated with the data
+     * @param data the serialized bytes
+     * @return the deserialized \Transaction\ object
+     */
     @Override
     public Transaction deserialize(String topic, byte[] data) {
         try {
@@ -34,8 +51,12 @@ public class TransactionDeserializer implements Deserializer<Transaction> {
         }
     }
 
+    /**
+     * Closes the deserializer.
+     */
     @Override
     public void close() {
         // not currently used
     }
+
 }

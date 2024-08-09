@@ -1,23 +1,23 @@
 package id.co.bca.kafka.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
 
+/**
+ * Represents a threshold with account number and threshold amount.
+ */
 @Data
-@Entity
-@Table(name = "thresholds")
 public class Threshold {
 
-  @Id
-  @Column(name = "account_number")
+  /**
+   * The account number associated with the threshold.
+   */
   @JsonProperty("account_number")
   private String accountNumber;
 
-  @Column(name = "threshold_amount")
+  /**
+   * The threshold amount for the account.
+   */
   @JsonProperty("threshold_amount")
   private Double thresholdAmount;
 
